@@ -128,7 +128,7 @@ class GRU:
             dZRC_n[t, :, 2*d:] = ZRC_n[t, :, :d] * dh_out[t]  # dc_n = z_n * dht
 
             #  below tanh
-            dZRC[t, :, 2*d:] = (1 - ZRC[t,:,2*d:]**2) * dZRC_n[t, :, 2*d:]  # dC = (1-tanh(C)^2)*dc_n
+            dZRC[t, :, 2*d:] = (1 - ZRC_n[t,:,2*d:]**2) * dZRC_n[t, :, 2*d:]  # dC = (1-tanh(C)^2)*dc_n
 
             # summation below tanh
             # dWc-xh = XH_reset.transpose * dC ## need += to accumulate over t loop
@@ -157,7 +157,7 @@ class GRU:
             dZRC_n[t, :, :d] += -1 * d_one_minus_z
 
             # below two sigma gates
-            dZRC[t, :, :2*d] = ZRC[t, :, :2*d]*(1-ZRC[t, :, :2*d])*dZRC_n[t, :, :2*d]
+            dZRC[t, :, :2*d] = ZRC_n[t, :, :2*d]*(1-ZRC_n[t, :, :2*d])*dZRC_n[t, :, :2*d]
             # sigma(Z)*(1-sigma(Z))*dZ_n   AND # sigma(R)*(1-sigma(R))*dR_n
             # summation below sigma gates
             dWGRU[:, :2*d] += np.dot(X_and_H_in[t].transpose(), dZRC[t, :, :2*d])
